@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Rock Paper Scissors</title>
+
+    <style>
+
+      body {
+        background-color: rgb(219, 141, 202);
+        color: white;
+        font-family: Ariel;
+        font-size: 20px;
+      }
+
+      .title {
+        font-size: 25px;
+        text-decoration: underline;
+      }
+
+      button {
+        width: 100px;
+        height: 120px;
+        padding: 20px 0px;
+        border-radius: 20px;
+      }
+
+      .buttonEmoji {
+        padding: 10px 10px;
+        height: 50px;
+      }
+
+      .rButtons {
+        display: flex;
+      }
+
+      .reset {
+        height: 60px;
+        padding: 15px;
+        margin: 5px 5px 0px 0px;;
+
+      }
+
+      p {
+        display: flex;
+
+      }
+
+
+    </style>
+  </head>
+
+  <body>
+    <p class = "title">Rock Paper Scissors</p>
+    <button class = "js-rock">
+      Rock
+      <img class = "buttonEmoji" src = "Rock-emoji.png">
+    </button>
+
+    <button class = "js-paper">
+      Paper
+      <img class = "buttonEmoji" src = "Paper-emoji.png">
+    </button>
+
+    <button class = "js-scissors">
+      Scissors
+      <img class = "buttonEmoji" src = "Scissors-emoji.png">
+    </button>
+
+    <p class = "js-result"></p>
+
+    <p class = "js-moves">
+      Your Move: <img class = "buttonEmoji" src = "Rock-emoji.png">
+      Computer's Move: <img class = "buttonEmoji" src = "Rock-emoji.png">
+      
+    </p>
+
+    <p class = "js-score" style = "font-family: 'Franklin Gothic'"></p>
+
+    <div class = "rButtons">
+      <button class = "reset js-reset">
+        Reset Score
+      </button>
+
+      <button class = "reset js-auto">
+        Auto Play
+      </button>
+    </div>
+
+    <script>
+      let score = JSON.parse(localStorage.getItem('score')) || {
+        wins: 0,
+        losses: 0,
+        ties: 0
+      };
+
+      updateScoreElement();
+
+      /*
+      if (!score) {
+        score = {
+          wins: 0,
+          losses: 0,
+          ties: 0
+        };
+      }
+      */
+
+      function playGame(playerMove) {
+        const computerMove = pickComputerMove();
+
+        let result = '';
+
+        if (playerMove === 'Scissors') {
+          if (computerMove === 'Rock') {
+            result = 'You Lost!';
+          } else if (computerMove === 'Paper') {
+            result = 'You Won!';
+          } else if (computerMove === 'Scissors') {
+            result = 'You Tied!';
+          }
+
+        } else if (playerMove === 'Paper') {
+          if (computerMove === 'Rock') {
+            result = 'You Won!';
+          } else if (computerMove === 'Paper') {
+            result = 'You Tied!';
+          } else if (computerMove === 'Scissors') {
+            result = 'You Lost!';
+          }
+          
+        } else if (playerMove === 'Rock') {
+          if (computerMove === 'Rock') {
+            result = 'You Tied!';
+          } else if (computerMove === 'Paper') {
+            result = 'You Lost!';
+          } else if (computerMove === 'Scissors') {
+            result = 'You Won!';
+          }
+        }
+
+        if (result === 'You Won!') {
+          score.wins ++;
+        } else if (result === 'You Lost!') {
+          score.losses ++;
+        } else if (result === 'You Tied!') {
+          score.ties ++;
+        }
+
+        localStorage.setItem('score', JSON.stringify(score));
+
+
+        updateScoreElement();
+
+        document.querySelector('.js-result').innerHTML = result;
+
+        document.querySelector('.js-moves').innerHTML = `
+          Your Move: <img class = "buttonEmoji" src = "${playerMove}-emoji.png">
+          Computer's Move: <img class = "buttonEmoji" src = "${computerMove}-emoji.png">`;
+
+
+        /*
+        alert(`You picked ${playerMove}. Computer picked ${computerMove}. ${result}
+          Wins: ${score.wins}, Losses: ${score.losses}, Ties: ${score.ties}`);
+          */
+      }
+
+      function updateScoreElement(){
+
+        document.querySelector('.js-score').innerHTML = `
+        Wins: ${score.wins} Losses: ${score.losses} Ties: ${score.ties}`;
+      }
+
+      function updateResultElement() {
+        document.querySelector('.js-result').innerHTML = result;
+      }
+
+      function updateMovesElement() {
+        document.querySelector('.js-moves').innerHTML = `
+        Your move was: ${playerMove}\n
+        The computer's move was: ${computerMove}`;
+      }
+
+      function pickComputerMove() {
+        const randomNumber = Math.random();
+
+        let computerMove = '';
+
+        if (randomNumber < 0.34) {
+          computerMove = 'Rock';
+        } else if (randomNumber < 0.67) {
+          computerMove = 'Paper';
+        } else {
+          computerMove = 'Scissors';
+        }
+
+        return computerMove;
+      }
+
+      document.body.addEventListener('keydown', (event) => {
+        if (event.key === 'r') {
+          playGame('Rock');
+        } else if (event.key === 'p') {
+            playGame('Paper');
+        } else if (event.key === 's') {
+          playGame('Scissors');
+        }
+      });
+
+
+      document.querySelector('.js-rock').addEventListener('click', () => {
+        playGame('Rock');
+      });
+
+      document.querySelector('.js-paper').addEventListener('click', () => {
+        playGame('Paper');
+      });
+
+      document.querySelector('.js-scissors').addEventListener('click', () => {
+        playGame('Scissors');
+      });
+
+      document.querySelector('.js-reset').addEventListener('click', () => {
+        score.wins = 0;
+        score.losses = 0;
+        score.ties = 0;
+        localStorage.removeItem('score');
+        updateScoreElement();
+      });
+
+      document.querySelector('.js-auto').addEventListener('click', () => {autoPlay();});
+
+      let autoPlayOn = false;
+      let autoInterval;
+      /* const autoPlay = () => {*/
+      function autoPlay() {
+        if (!autoPlayOn) {
+          autoInterval = setInterval(() => {
+          playGame(pickComputerMove());
+          }, 1000);
+          autoPlayOn = true;
+        } else {
+          clearInterval(autoInterval);
+          autoPlayOn = false;
+        }
+      }
+
+    </script>
+  </body>
+</html>
