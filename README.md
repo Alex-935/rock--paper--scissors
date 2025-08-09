@@ -1,4 +1,6 @@
 A fun little rock, paper, scissors game with:
+
+
 <img width="540" height="453" alt="Image" src="https://github.com/user-attachments/assets/56182e95-6d44-4e0c-97df-decc127281d7" />
 
 Includes JavaScript and CSS inside the main HTML file:
