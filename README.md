@@ -1,4 +1,4 @@
-A fun little rock, paper, scissors game with:
+## A fun little rock, paper, scissors game with:
   - score keeping
   - local storage of scores
   - reset scores
